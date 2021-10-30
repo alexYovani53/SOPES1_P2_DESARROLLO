@@ -8,6 +8,7 @@ import (
 	"io"
 	"strconv"
 	"time"
+	"net/http"
 )
 
 type comandoCLI struct{
@@ -183,7 +184,15 @@ func ValidarEnvio(comando comandoCLI, url string) {
 
 				///cambiar por funcion de envio a grpc
 				go func() {
-					fmt.Println(url)
+					fmt.Println("url: ",url);
+					resp, err:=http.Get("http://34.69.79.12.nip.io/myapp");
+					if err !=nil{						
+						fmt.Printf("No se ha podido enviar la información: %s\n", err)
+					}	else{
+						fmt.Printf("informacion enviada: %s\n",resp)
+					}
+
+
 				}()
 				//max games validation
 				if contador >= int(comando.Rungames) {

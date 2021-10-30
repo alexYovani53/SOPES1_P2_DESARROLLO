@@ -91,3 +91,18 @@ kubectl delete -f squidgame.yaml
 export LOADBALANCER_IP=X.X.X.X
 for i in {0..100000}; do  curl http://${LOADBALANCER_IP}.nip.io/myapp; done
 ```
+
+## Chaos Mesh Installation
+```
+curl -sSL https://mirrors.chaos-mesh.org/v2.0.3/install.sh | bash
+```
+Opening the dashboard
+```
+kubectl port-forward -n chaos-testing svc/chaos-dashboard 2333:2333
+```
+```
+kubectl apply -f chaos_mesh/pod-experiments.yaml
+```
+```
+kubectl get pods -n squidgame -w
+```

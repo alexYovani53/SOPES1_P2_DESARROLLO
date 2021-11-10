@@ -14,11 +14,25 @@ import (
 	"log"
 	"net"
 	"tuiterserver/greet.pb"
+
+	"math/rand"
 )
 
 // Iniciar una estructura que posteriormente gRPC utilizará para realizar un server
 type server struct{
 }
+
+
+
+func GameRandom(jugadores int) int {
+	val:= rand.Intn(jugadores)
+	return val
+}
+
+func GameMaximo(jugadores int) int {
+	return jugadores
+}
+
 
 // Función que será llamada desde el cliente
 // Debemos pasarle un contexto donde se ejecutara la funcion
@@ -34,7 +48,16 @@ func (*server) Greet(ctx context.Context, req *greetpb.GreetRequest) (*greetpb.G
 	nombreJuego := req.GetGreeting().GetNombreJuego()
 	jugadores := req.GetGreeting().GetJugadores()
 
-	result := "No.Juego -> "+strconv.FormatInt(juego,10) + " nombreJuego -> " + nombreJuego + " Jugadores -> " + strconv.FormatInt(jugadores,10)
+	ganador := 0
+	jugadores2:= int(jugadores)
+
+	if juego == 1 {
+		ganador = GameRandom(jugadores2)
+	}else{
+		ganador = GameRandom(jugadores2)
+	}
+
+	result := " ||| No.Juego -> "+strconv.FormatInt(juego,10) + "| nombreJuego -> " + nombreJuego + "| Jugadores -> " + strconv.FormatInt(jugadores,10) + "| Ganador-> " +strconv.Itoa(ganador) + " |||"
 
 	fmt.Printf(">> SERVER: %s\n", result)
 	// Creamos un nuevo objeto GreetResponse definido en el protofile

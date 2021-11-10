@@ -112,7 +112,7 @@ func http_server(w http.ResponseWriter, r *http.Request) {
 
 
 		// Enviamos informacion de vuelta, indicando que fue generada la peticion
-		fmt.Fprintf(w, "¡Mensaje Publicado!\n")
+		fmt.Fprintf(w, "¡Juego completado!\n")
 		fmt.Fprintf(w, "NombreJuego = %s\n", p.NombreJuego)
 		fmt.Fprintf(w, "Juego = %d\n", p.Juego)
 		fmt.Fprintf(w, "Jugadores = %d\n", p.Jugadores)

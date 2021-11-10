@@ -66,7 +66,7 @@ metadata:
   namespace: squidgame
 spec: 
   rules: 
-  - host: 34.69.79.12.nip.io
+  - host: 34.125.165.119.nip.io
     http: 
       paths: 
       - path: /myapp

@@ -8,7 +8,14 @@ import (
 	"io"
 	"strconv"
 	"time"
+
+
 	"net/http"
+	"bytes"
+	"encoding/json"
+
+	"math/rand"
+	"io/ioutil"
 )
 
 type comandoCLI struct{
@@ -16,7 +23,14 @@ type comandoCLI struct{
 	Concurrence	int
 	Rungames	int
 	Players 	int
-	Jugadores		[]	int
+	IndiceJuegos		[]	int
+	NombreJuegos		[]  string
+}
+
+type Juego struct{
+	Juego int `json:"juego"`
+	NombreJuego string `json:"nombreJuego"`
+	Jugadores int `json:"jugadores"`
 }
 
 func main(){
@@ -62,6 +76,7 @@ func main(){
 func splitComando(comando string) comandoCLI{
 
 	var indices [] int
+	var nombres [] string
 	var players string 
 	var rungames string
 	var concurrence string
@@ -74,27 +89,30 @@ func splitComando(comando string) comandoCLI{
 	}
 
 
-	/*OBTENIENDO JUGADORES*/
-	jugadores := strings.TrimLeft(comandoSeparado[1],"gamename");
-	jugadores = strings.TrimSpace(jugadores)
-	jugadores = strings.TrimLeft(jugadores," ")
-	jugadores = strings.TrimLeft(jugadores,"\"")
-	jugadores = strings.TrimRight(jugadores," ")
-	jugadores = strings.TrimRight(jugadores,"\"")
+	/*OBTENIENDO JUEGOS*/
+	juegosLista := strings.TrimLeft(comandoSeparado[1],"gamename");
+	juegosLista = strings.TrimSpace(juegosLista)
+	juegosLista = strings.TrimLeft(juegosLista," ")
+	juegosLista = strings.TrimLeft(juegosLista,"\"")
+	juegosLista = strings.TrimRight(juegosLista," ")
+	juegosLista = strings.TrimRight(juegosLista,"\"")
 
-	idJugadores :=strings.Split(jugadores,"|");
+	fragmentosJuegos :=strings.Split(juegosLista,"|");
 
 
 
-	for i := 0; i<= len(idJugadores) - 1; i++{
+	for i := 0; i<= len(fragmentosJuegos) - 1; i++{
 		
 		if i%2 == 0{
-			id_Jugador := strings.TrimSpace(idJugadores[i])
-			if res,err := strconv.Atoi(id_Jugador)
+			idJuego := strings.TrimSpace(fragmentosJuegos[i])
+			if res,err := strconv.Atoi(idJuego)
 			err == nil{				
 				indices = append(indices,res);
 			}
-		} 
+		}else{
+			nombres = append(nombres,strings.TrimSpace(fragmentosJuegos[i]))
+			fmt.Println(strings.TrimSpace(fragmentosJuegos[i]))
+		}
 
 	}
 
@@ -143,10 +161,11 @@ func splitComando(comando string) comandoCLI{
 		comandoStruct.Players = i
 	}
 
-	comandoStruct.Jugadores = indices
+	comandoStruct.IndiceJuegos = indices	
+	comandoStruct.NombreJuegos = nombres
 
 	
-	printSlice(comandoStruct.Jugadores)
+	printSlice(comandoStruct.IndiceJuegos)
 	fmt.Println(comandoStruct.Players)
 	fmt.Println(comandoStruct.Rungames)
 	fmt.Println(comandoStruct.Concurrence)
@@ -160,7 +179,7 @@ func printSlice(s []int) {
 	fmt.Printf("len=%d cap=%d %v\n", len(s), cap(s), s)
 }
 
-func ValidarEnvio(comando comandoCLI, url string) {
+func ValidarEnvio(comando comandoCLI, url_access string) {
 	var contador int
 	var finish bool
 	//start time
@@ -168,7 +187,7 @@ func ValidarEnvio(comando comandoCLI, url string) {
 	/// se define el tiempo maximo en minutos
 	timeout := start_time.Add(time.Minute * time.Duration(comando.Timeout))
 	for {
-		for i := 0; i < len(comando.Jugadores); i++ {
+		for i := 0; i < len(comando.IndiceJuegos); i++ {
 			actual_time := time.Now()
 			//timeout break
 			if actual_time.After(timeout) {
@@ -184,12 +203,32 @@ func ValidarEnvio(comando comandoCLI, url string) {
 
 				///cambiar por funcion de envio a grpc
 				go func() {
-					fmt.Println("url: ",url);
-					resp, err:=http.Get("http://34.69.79.12.nip.io/myapp");
+					fmt.Println("url: ",url_access);
+
+					//resp, err:=http.Get("http://34.69.79.12.nip.io/myapp");
+
+					indice := rand.Intn(len(comando.IndiceJuegos))
+					jugadores := rand.Intn(comando.Players)
+
+					data := Juego{comando.IndiceJuegos[indice],comando.NombreJuegos[indice],jugadores}
+					data2,_:= json.Marshal(data)
+
+					resp, err:= http.Post("http://localhost:5001","application/json",
+					bytes.NewBuffer(data2))
+
 					if err !=nil{						
 						fmt.Printf("No se ha podido enviar la información: %s\n", err)
-					}	else{
-						fmt.Printf("informacion enviada: %s\n",resp)
+					}else{    
+
+						defer resp.Body.Close()
+
+						body, err := ioutil.ReadAll(resp.Body)
+						if err != nil {
+							fmt.Println(err)
+						}
+						fmt.Println(string(body))
+
+						//fmt.Printf("informacion enviada: %s\n",resp.Body)
 					}
 
 

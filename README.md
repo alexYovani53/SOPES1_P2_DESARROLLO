@@ -11,12 +11,15 @@ sudo apt-get update && sudo apt-get install google-cloud-sdk
 gcloud init
 ```  
 
+
+
 ## Installing helm
 ```
 curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
 chmod 700 get_helm.sh
 ./get_helm.sh
 ```
+
 
 ## Install kubeclt stable version
 ```
@@ -25,9 +28,14 @@ sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
 kubectl version --client
 ```
 
+## Create Cluster
+```
+gcloud container clusters create k8s-demo --num-nodes=3 --tags=allin,allout --machine-type=n1-standard-2 --no-enable-network-policy --zone=us-west4-a
+```
+
 ## Configure kubectl to connect to your cluster
 ```
-gcloud container clusters get-credentials k8s-demo --zone us-central1-c --project sopes1-323620
+gcloud container clusters get-credentials k8s-demo --zone us-west4-a --project sopes1-323620
 kubectl get nodes
 ```
 

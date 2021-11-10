@@ -1,0 +1,17 @@
+kind: PodChaos
+apiVersion: chaos-mesh.org/v1alpha1
+metadata:
+  name: experimento2
+  namespace: squidgame
+  annotations:
+    experiment.chaos-mesh.org/pause: 'false'
+spec:
+  selector:
+    namespaces:
+      - squidgame
+    labelSelectors:
+      app: myapp
+  mode: one
+  action: pod-failure
+  duration: 1m
+  gracePeriod: 0

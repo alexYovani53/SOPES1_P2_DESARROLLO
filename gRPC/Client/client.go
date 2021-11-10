@@ -16,6 +16,8 @@ import (
 
 	"google.golang.org/grpc"
 	"encoding/json"
+
+	"github.com/joho/godotenv"
 )
 
 
@@ -126,6 +128,14 @@ func http_server(w http.ResponseWriter, r *http.Request) {
 
 // Funcion principal
 func main() {
+
+	// load .env file
+	err := godotenv.Load(".env")
+
+	if err != nil {
+		fmt.Println("sin .env")
+	}
+
 	instance_name := os.Getenv("NAME")
 	client_host := os.Getenv("CLIENT_HOST")
 
@@ -140,4 +150,7 @@ func main() {
 	if err := http.ListenAndServe(client_host, nil); err != nil {
 		log.Fatal(err)
 	}
+
+
+	
 }

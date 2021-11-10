@@ -16,6 +16,8 @@ import (
 	"tuiterserver/greet.pb"
 
 	"math/rand"
+
+	"github.com/joho/godotenv"
 )
 
 // Iniciar una estructura que posteriormente gRPC utilizará para realizar un server
@@ -70,6 +72,14 @@ func (*server) Greet(ctx context.Context, req *greetpb.GreetRequest) (*greetpb.G
 
 // Funcion principal
 func main() {
+
+	// load .env file
+	err := godotenv.Load(".env")
+
+	if err != nil {
+		fmt.Println("sin .env")
+	}
+
 
 	// Leer el host de las variables del ambiente
 	host := os.Getenv("HOST")

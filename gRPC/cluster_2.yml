@@ -9,12 +9,12 @@ services:
 
   grpcclient:
     build: ./Client
-    ports:
-      - "5002:5000"
     environment:
       - CLIENT_HOST=:5000
       - SERVER_HOST=grpcserver:50051
       - NAME=instancia2
+    ports:
+      - "5002:5000"
     networks:
       - grpctuiter2
 

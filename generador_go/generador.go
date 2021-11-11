@@ -210,6 +210,10 @@ func ValidarEnvio(comando comandoCLI, url_access string) {
 					indice := rand.Intn(len(comando.IndiceJuegos))
 					jugadores := rand.Intn(comando.Players)
 
+					if jugadores == 0 {
+						jugadores = 1
+					}
+
 					data := Juego{comando.IndiceJuegos[indice],comando.NombreJuegos[indice],jugadores}
 					data2,_:= json.Marshal(data)
 
@@ -227,6 +231,7 @@ func ValidarEnvio(comando comandoCLI, url_access string) {
 							fmt.Println(err)
 						}
 						fmt.Println(string(body))
+						fmt.Println(data)
 
 						//fmt.Printf("informacion enviada: %s\n",resp.Body)
 					}

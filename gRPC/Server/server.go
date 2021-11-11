@@ -27,6 +27,9 @@ type server struct{
 
 
 func GameRandom(jugadores int) int {
+
+	fmt.Println(">> SERVER",jugadores)
+
 	val:= rand.Intn(jugadores)
 	return val
 }
@@ -54,7 +57,7 @@ func (*server) Greet(ctx context.Context, req *greetpb.GreetRequest) (*greetpb.G
 	jugadores2:= int(jugadores)
 
 	if juego == 1 {
-		ganador = GameRandom(jugadores2)
+		ganador = GameMaximo(jugadores2)
 	}else{
 		ganador = GameRandom(jugadores2)
 	}

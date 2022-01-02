@@ -1,0 +1,89 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: myapp-pubsub
+  name: myapp-pubsub
+  namespace: squidgame
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: myapp-pubsub
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: myapp-pubsub
+      annotations:
+        linkerd.io/inject: enabled
+    spec:
+      containers:
+      - image: yovani53/server_grpc_pubsub
+        name: server-grpc-pubsub
+        ports:
+          - containerPort: 50051
+        env:
+        - name: PROJECT_ID 
+          value: "artful-palace-330303"
+        - name: TOPIC_ID
+          value: "tema1"
+
+      - image: yovani53/client_grpc_pubsub
+        name: client-grpc-pubsub
+        ports:
+          - containerPort: 5000
+        resources: {}
+        env:   
+        - name: CLIENT_HOST
+          value: "0.0.0.0:5000"
+        - name: SERVER_HOST
+          value: "0.0.0.0:50051"
+        - name: NAME
+          value: "instancia2"
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: myapp-pubsub
+  name: myapp-pubsub
+  namespace: squidgame
+spec:
+  ports:
+  - port: 5000
+    protocol: TCP
+    targetPort: 5000
+  selector:
+    app: myapp-pubsub
+  type: ClusterIP
+status:
+  loadBalancer: {}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: worker-pubusb
+  name: worker-pubsub
+  namespace: squidgame
+spec:
+  selector:
+    matchLabels:
+      app: worker-pubsub
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: worker-pubsub
+    spec:
+      containers:
+      - image: yovani53/worker-pubsub
+        name: worker-pubsub
+status: {}

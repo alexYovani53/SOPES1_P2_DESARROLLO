@@ -1,0 +1,83 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: react-web
+  name: react-web
+  namespace: squidgame
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: react-web
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: react-web
+    spec:
+      containers:
+      - name: server-web
+        image: yovani53/server-so1-p2
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8000
+      - name: sitio-web
+        image: yovani53/client-so1-p2
+        imagePullPolicy: Always
+        ports:
+          - containerPort: 80      
+        resources: {}
+        env: 
+          - name: REACT_APP_BACKEND_URL
+            value: http://localhost:8000
+
+status: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: react-web
+  name: react-web
+  namespace: squidgame
+spec:
+  ports:
+  - port: 3000
+    protocol: TCP
+    targetPort: 3000
+  selector:
+    app: react-web
+  type: ClusterIP
+status:
+  loadBalancer: {}
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: basic-ingress
+  annotations: 
+    kubernetes.io/ingress.class: "nginx" 
+    nginx.ingress.kubernetes.io/rewrite-target: / 
+    nginx.ingress.kubernetes.io/service-upstream: "true"
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-methods: "PUT, GET, POST, OPTIONS"
+    nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      more_set_headers "Access-Control-Allow-Origin: $http_origin";
+  namespace: squidgame
+spec:
+  rules: 
+    - host: 34.125.165.119.nip.io
+      http: 
+        paths: 
+        - path: /
+          pathType: Prefix 
+          backend: 
+            service: 
+              name: react-web
+              port: 
+                number: 3000

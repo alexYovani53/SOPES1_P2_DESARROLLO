@@ -217,7 +217,7 @@ func ValidarEnvio(comando comandoCLI, url_access string) {
 					data := Juego{comando.IndiceJuegos[indice],comando.NombreJuegos[indice],jugadores}
 					data2,_:= json.Marshal(data)
 
-					resp, err:= http.Post("http://localhost:5001","application/json",
+					resp, err:= http.Post("http://34.125.165.119.nip.io/squidgame","application/json",
 					bytes.NewBuffer(data2))
 
 					if err !=nil{						

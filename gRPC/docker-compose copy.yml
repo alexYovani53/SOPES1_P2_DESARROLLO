@@ -1,14 +1,14 @@
 version: "3.9"
 services:
   grpcserver:
-    image: yovani53/server_grpc_kafka
+    build: ./Server
     ports:
       - "50052:50051"
     networks:
       - grpctuiter
 
   grpcclient:
-    image: yovani53/client_grpc_kafka
+    build: ./Client
     environment:
       - CLIENT_HOST=:5000
       - SERVER_HOST=grpcserver:50051

@@ -1,10 +1,10 @@
 kind: Schedule
 apiVersion: chaos-mesh.org/v1alpha1
 metadata:
-  name: experiment1
-  namespace: chaos-testing
+  name: matand-pod
+  namespace: squidgame
 spec:
-  schedule: '@every 15s'
+  schedule: '@every 5s'
   startingDeadlineSeconds: null
   concurrencyPolicy: Forbid
   historyLimit: 1
@@ -14,8 +14,7 @@ spec:
       namespaces:
         - squidgame
       labelSelectors:
-        app: myapp
+        app: myapp-pubsub
     mode: one
     action: pod-kill
-    duration: 1m
     gracePeriod: 0

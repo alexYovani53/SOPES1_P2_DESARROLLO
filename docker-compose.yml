@@ -1,0 +1,21 @@
+version: "3.9"
+services:
+  grpcserver:
+    image: yovani53/server-so1-p2
+    ports:
+      - "8000:8000"
+    networks:
+      - otro
+
+  grpcclient:
+    image: yovani53/client-so1-p2-v2
+    environment:
+      - "REACT_APP_BACKEND_ULR:0.0.0.0:8000"
+    ports:
+      - "3000:3000"
+    networks:
+      - otro
+
+networks:
+  otro:
+    driver: "bridge"

@@ -25,6 +25,9 @@ type server struct{
 }
 
 
+func GameMaximo(jugadores int) int {
+	return jugadores
+}
 
 func GameRandom(jugadores int) int {
 
@@ -34,9 +37,41 @@ func GameRandom(jugadores int) int {
 	return val
 }
 
-func GameMaximo(jugadores int) int {
-	return jugadores
+
+func GameMedio(jugadores int) int {
+	if jugadores < 2 {
+		return jugadores
+	}
+
+	medio := 0
+	medio = int(jugadores/2)
+
+	return medio;
 }
+
+func GameModulo(jugadores int) int {
+	if jugadores < 2 {
+		return jugadores
+	}
+
+	medio := 0
+	medio = int(jugadores/2)
+
+	nuevoValor := medio * rand.Intn(100)
+
+	modulo := nuevoValor % jugadores
+
+	return modulo
+}
+
+func GamePenultimo(jugadores int) int {
+	if jugadores < 2 {
+		return jugadores
+	}
+
+	return jugadores - 1
+}
+
 
 
 // Función que será llamada desde el cliente
@@ -58,8 +93,14 @@ func (*server) Greet(ctx context.Context, req *greetpb.GreetRequest) (*greetpb.G
 
 	if juego == 1 {
 		ganador = GameMaximo(jugadores2)
-	}else{
+	}else if juego == 2{
 		ganador = GameRandom(jugadores2)
+	}else if juego == 3 {
+		ganador = GameMedio(jugadores2)
+	}else if juego == 4 {
+		ganador = GameModulo(jugadores2)
+	}else if juego == 5 {
+		ganador = GamePenultimo(jugadores2)
 	}
 
 	result := " ||| No.Juego -> "+strconv.FormatInt(juego,10) + "| nombreJuego -> " + nombreJuego + "| Jugadores -> " + strconv.FormatInt(jugadores,10) + "| Ganador-> " +strconv.Itoa(ganador) + " |||"

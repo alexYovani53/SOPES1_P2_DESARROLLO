@@ -1,12 +1,12 @@
 kind: Schedule
 apiVersion: chaos-mesh.org/v1alpha1
 metadata:
-  name: experiment1
-  namespace: chaos-testing
+  name: experimento9
+  namespace: squidgame
 spec:
-  schedule: '@every 15s'
+  schedule: '@every 25s'
   startingDeadlineSeconds: null
-  concurrencyPolicy: Forbid
+  concurrencyPolicy: Allow
   historyLimit: 1
   type: PodChaos
   podChaos:
@@ -14,8 +14,10 @@ spec:
       namespaces:
         - squidgame
       labelSelectors:
-        app: myapp
+        app: myapp-pubsub
     mode: one
-    action: pod-failure
-    duration: 1m
+    containerNames:
+      - client-grpc-pubsub
+    action: container-kill
+    duration: 15m
     gracePeriod: 0

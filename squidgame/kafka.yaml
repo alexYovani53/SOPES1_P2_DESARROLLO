@@ -1,0 +1,91 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  creationTimestamp: null
+  name: squidgame
+spec: {}
+status: {}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: myapp-kafka
+  name: myapp-kafka
+  namespace: squidgame
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: myapp-kafka
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: myapp-kafka
+      annotations:
+        linkerd.io/inject: enabled
+    spec:
+      containers:
+      - image: yovani53/server_grpc_kafka
+        name: server-grpc-kafka
+        ports:
+          - containerPort: 50051
+      - image: yovani53/client_grpc_kafka
+        name: client-grpc-kafka
+        ports:
+          - containerPort: 5000
+        resources: {}
+        env:   
+        - name: CLIENT_HOST
+          value: "0.0.0.0:5000"
+        - name: SERVER_HOST
+          value: "0.0.0.0:50051"
+        - name: NAME
+          value: "instancia1"
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: myapp-kafka
+  name: myapp-kafka
+  namespace: squidgame
+spec:
+  ports:
+  - port: 5000
+    protocol: TCP
+    targetPort: 5000
+  selector:
+    app: myapp-kafka
+  type: ClusterIP
+status:
+  loadBalancer: {}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: worker-kafka
+  name: worker-kafka
+  namespace: squidgame
+spec:
+  selector:
+    matchLabels:
+      app: worker-kafka
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: worker-kafka
+    spec:
+      containers:
+      - image: yovani53/worker-kafka
+        name: worker-kafka
+status: {}

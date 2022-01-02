@@ -1,0 +1,22 @@
+kind: Schedule
+apiVersion: chaos-mesh.org/v1alpha1
+metadata:
+  name: net-emulation
+  namespace: squidgame
+spec:
+  schedule: '@every 30s'
+  startingDeadlineSeconds: null
+  concurrencyPolicy: Allow
+  historyLimit: 1
+  type: NetworkChaos
+  networkChaos:
+    selector:
+      namespaces:
+        - squidgame
+    mode: one
+    action: delay
+    duration: 2m
+    delay:
+      latency: 90ms
+      correlation: '25'
+      jitter: 90ms
